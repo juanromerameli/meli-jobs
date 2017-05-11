@@ -26,7 +26,7 @@ public class RestRequestJob extends Job {
     private URI uri;
     private RestTemplate restTemplate = new RestTemplate();
 
-    private RestRequestJob(String name, URI uri) {
+    protected RestRequestJob(String name, URI uri) {
         super(name);
         this.uri = uri;
         this.restTemplate = new RestTemplate();

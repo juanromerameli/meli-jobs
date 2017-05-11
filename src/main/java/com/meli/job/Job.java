@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
  * can be executed.
  * A job has a name and an associated result.
  *
- * @author  Juan Manuel Romera Ferrrio
+ * @author Juan Manuel Romera Ferrrio
  */
 public abstract class Job implements Callable<JobResults> {
 
@@ -51,9 +51,7 @@ public abstract class Job implements Callable<JobResults> {
 
     @Override
     public String toString() {
-        return "Job{" +
-                "name='" + name + '\'' +
-                '}';
+        return "Job{" + "name='" + name + '\'' + '}';
     }
 
     public void setInputData(Object... inputData) {

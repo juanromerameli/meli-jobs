@@ -29,7 +29,7 @@ public class ElasticJob extends Job {
     private URI uri;
     private RestTemplate restTemplate = new RestTemplate();
 
-    private ElasticJob(String name, String query, URI uri) {
+    protected ElasticJob(String name, String query, URI uri) {
         super(name);
         this.query = query;
         this.uri = uri;

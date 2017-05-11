@@ -31,8 +31,10 @@ We have the next Job implementations
 * `ChainJob`
 * `ElasticJob`
 * `FamilyJob`
+* `GroupJob`
 * `InputDataJob`
 * `RestRequestJob`
+* `SaveFileJob`
 
 ### Example
 
@@ -49,20 +51,9 @@ Future<JobResults> future = executorJobService.execute(elasticJob);
 ```java
 ExecutorJobService executorJobService = new ExecutorJobService(Executors.newSingleThreadExecutor());
 
-ElasticJob elasticJob = new ElasticJob.Builder().name("Get Shipped Shipments").uri("an uri").query("an elastic search query").create();
-
-InputDataJob savingDataJob = new InputDataJob.Builder().name("Save data in a File").executable((items) -> {
-    try {
-        Files.write(Paths.get("file.txt"), items.stream()
-            .map(object -> Objects.toString(object, null))
-            .collect(Collectors.toList()));
-     } catch (IOException e) {
-           log.error("Error saving data", e);
-     }
-           return items;
-     }).create();
-        
-ChainJob chainJob = new ChainJob.Builder().name("Get Shipped Shipments & Save in a File").job(elasticJob).job(savingDataJob).create();
+ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shippedShipmentsQuery).create();
+SaveFileJob savingDataJob = new SaveFileJob.Builder().name("Save data in a File").path(Paths.get("file.txt")).create();
+ChainJob chainJob = new ChainJob.Builder().name("Get Shipments & Save in a File").job(getShipmentsJob).job(savingDataJob).create();
 
 executorJobService.execute(chainJob);
 ```

@@ -14,12 +14,12 @@ public class InputDataJob extends Job {
 
     private Executable executable;
 
-    private InputDataJob(String name, Executable executable) {
+    protected InputDataJob(String name, Executable executable) {
         super(name);
         this.executable = executable;
     }
 
-    private InputDataJob(String name, Executable executable, Object... inputData) {
+    protected InputDataJob(String name, Executable executable, Object... inputData) {
         super(name);
         this.setInputData(inputData);
         this.executable = executable;

@@ -1,15 +1,11 @@
 import com.meli.job.*;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * Created by jromera on 9/5/17.
@@ -41,18 +37,7 @@ public class Examples {
     public void createElasticJobAndSaveInFile() {
         try {
             ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shippedShipmentsQuery).create();
-
-            InputDataJob savingDataJob = new InputDataJob.Builder().name("Save data in a File").executable((items) -> {
-                try {
-                    Files.write(Paths.get("file.txt"), items.stream()
-                            .map(object -> Objects.toString(object, null))
-                            .collect(Collectors.toList()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return items;
-            }).create();
-
+            SaveFileJob savingDataJob = new SaveFileJob.Builder().name("Save data in a File").path(Paths.get("file.txt")).create();
             ChainJob chainJob = new ChainJob.Builder().name("Get Shipments & Save in a File").job(getShipmentsJob).job(savingDataJob).create();
 
             executorJobService.execute(chainJob).get();
