@@ -1,5 +1,7 @@
 package com.meli.job;
 
+import com.meli.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,10 @@ public class ChainJob extends Job {
         }
 
         public ChainJob create() {
+
+            Preconditions.checkNullOrEmpty(name, "Name can't be null or empty");
+            Preconditions.checkNullOrEmpty(jobs, "Jobs can't be null or empty");
+
             return new ChainJob(this.name, this.jobs);
         }
     }

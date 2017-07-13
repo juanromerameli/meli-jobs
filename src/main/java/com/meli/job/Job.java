@@ -37,14 +37,20 @@ public abstract class Job implements Callable<JobResults> {
 
     @Override
     public JobResults call() {
+
+        this.log.info("Executing " + this);
         long startTime = System.currentTimeMillis();
 
-        this.log.info(this.getClass().getSimpleName() + " executing job " + this.name);
-
-        this.execute();
-
-        this.runtTime = System.currentTimeMillis() - startTime;
-        this.isDone = true;
+        try {
+            this.execute();
+        } catch (Exception e) {
+            this.log.info("Error executing " + this + " Exception -> " + e);
+            throw e;
+        } finally {
+            this.runtTime = System.currentTimeMillis() - startTime;
+            this.isDone = true;
+            this.log.info(this + " was a running time of " + this.runtTime + " ms");
+        }
 
         return this.jobResults;
     }

@@ -59,7 +59,7 @@ public class InputDataJob extends Job {
 
         public InputDataJob create() {
 
-            Preconditions.checkNullOrEmpty(name, "Name can't be null");
+            Preconditions.checkNullOrEmpty(name, "Name can't be null or empty");
             Preconditions.checkNotNull(executable, "Executable can't be null");
 
             if (inputData == null)

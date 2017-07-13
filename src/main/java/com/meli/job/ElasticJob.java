@@ -2,6 +2,7 @@ package com.meli.job;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.meli.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class ElasticJob extends Job {
     private Logger log = LoggerFactory.getLogger(ElasticJob.class);
     private String query;
     private URI uri;
-    private RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate;
 
-    protected ElasticJob(String name, String query, URI uri) {
+    protected ElasticJob(String name, String query, URI uri, RestTemplate restTemplate) {
         super(name);
         this.query = query;
         this.uri = uri;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -75,8 +76,10 @@ public class ElasticJob extends Job {
         private String query;
         private String name;
         private URI uri;
+        private RestTemplate restTemplate;
 
         public Builder() {
+            this.restTemplate = new RestTemplate();
         }
 
         public Builder name(String name) {
@@ -94,8 +97,19 @@ public class ElasticJob extends Job {
             return this;
         }
 
+        public Builder restTemplate(RestTemplate restTemplate) {
+            this.restTemplate = restTemplate;
+            return this;
+        }
+
         public ElasticJob create() {
-            return new ElasticJob(this.name, this.query, this.uri);
+
+            Preconditions.checkNullOrEmpty(name, "Name can't be null or empty");
+            Preconditions.checkNullOrEmpty(query, "Query can't be null or empty");
+            Preconditions.checkNotNull(uri, "Uri can't be null");
+
+
+            return new ElasticJob(this.name, this.query, this.uri, this.restTemplate);
         }
     }
 }

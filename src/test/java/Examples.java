@@ -12,8 +12,10 @@ import java.util.concurrent.Executors;
  */
 public class Examples {
 
+
+
     private URI elasticUri = new URI("http://www.google.com");
-    private String shippedShipmentsQuery = "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"shipment.status\":\"shipped\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"facets\":{}}";
+    private static String shipmentQuery = "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"shipment.substatus\":\"picked_up\"}},{\"term\":{\"shipment.status\":\"ready_to_ship\"}},{\"term\":{\"shipment.site_id\":\"MLA\"}},{\"range\":{\"shipment.date_created\":{\"gt\":\"now-1d/d\",\"lt\":\"now/d\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":2,\"sort\":[],\"facets\":{}}";
 
     private ExecutorJobService executorJobService = new ExecutorJobService(Executors.newSingleThreadExecutor());
 
@@ -24,7 +26,7 @@ public class Examples {
     @Test
     public void createElasticJob() {
         try {
-            ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shippedShipmentsQuery).create();
+            ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shipmentQuery).create();
             executorJobService.execute(getShipmentsJob).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -36,7 +38,7 @@ public class Examples {
     @Test
     public void createElasticJobAndSaveInFile() {
         try {
-            ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shippedShipmentsQuery).create();
+            ElasticJob getShipmentsJob = new ElasticJob.Builder().name("Get Shipments").uri(elasticUri).query(shipmentQuery).create();
             SaveFileJob savingDataJob = new SaveFileJob.Builder().name("Save data in a File").path(Paths.get("file.txt")).create();
             ChainJob chainJob = new ChainJob.Builder().name("Get Shipments & Save in a File").job(getShipmentsJob).job(savingDataJob).create();
 
@@ -66,5 +68,15 @@ public class Examples {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void saveData() {
+        Object[] objects = new Object[10000000];
+        for (int i = 0; i < 10000000; i++) {
+            objects[i] = "juan,romera";
+        }
+        SaveFileJob savingDataJob = new SaveFileJob.Builder().name("Save data in a File").inputData(objects).path(Paths.get("file.csv")).create();
+        savingDataJob.call();
     }
 }
